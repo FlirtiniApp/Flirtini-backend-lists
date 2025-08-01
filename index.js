@@ -1,20 +1,27 @@
 const express = require("express");
 const cors = require("cors");
-
-const corsOptions = {
-  origin: "http://localhost:3000",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-};
-
 const app = express();
+
+const allowedOrigins = ["http://localhost:3000", "http://172.24.3.4:3000"];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 const port = 3000;
 const request = require("request");
 
 let users = [];
 
-app.use(cors(corsOptions));
 app.use(express.json());
 
 async function fetchUsers() {
@@ -50,14 +57,11 @@ app.listen(port, () => {
 
 app.post("/users", (req, res) => {
   const { drinkId, userId } = req.body;
-  console.log(`getting drink: \x1b[35m${drinkId}\x1b[0m`);
 
   request.get(
     `http://172.24.3.84:3000/users/${userId}`,
     (getError, getResponse, getBody) => {
       const data = JSON.parse(getBody);
-
-      console.log(`getting user: ${userId}`);
 
       let a = [...data.favouriteDrinks, drinkId];
       let s = new Set(a);
@@ -73,7 +77,8 @@ app.post("/users", (req, res) => {
         (putError, putResponse, putBody) => {
           console.log("updating user");
           if (putError) {
-            console.log("wyjebało");
+            console.error("Update error:", putError);
+            return res.status(500).send("Internal Server Error");
           }
         }
       );
