@@ -1,0 +1,265 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Drink List Management API",
+    "description": "API do zarządzania osobistymi listami drinków użytkownika.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Cherry",
+      "email": "cherry@example.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Lokalny serwer deweloperski"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Lists",
+      "description": "Operacje na listach drinków"
+    },
+    {
+      "name": "Drinks",
+      "description": "Operacje na drinkach w ramach list"
+    }
+  ],
+  "paths": {
+    "/lists": {
+      "get": {
+        "summary": "Pobiera wszystkie listy użytkownika.",
+        "description": "Zwraca wszystkie listy drinków zapisane przez użytkownika.",
+        "operationId": "getUserLists",
+        "tags": ["Lists"],
+        "responses": {
+          "200": {
+            "description": "Lista wszystkich osobistych list drinków.",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "id": "1",
+                    "name": "Moje ulubione",
+                    "drinks": [
+                      { "id": "a1", "name": "Mojito" },
+                      { "id": "b2", "name": "Whiskey Sour" }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Tworzy nową listę.",
+        "description": "Tworzy nową, pustą listę drinków użytkownika.",
+        "operationId": "createList",
+        "tags": ["Lists"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "name": "Nowa lista"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Lista została utworzona.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "2",
+                  "name": "Nowa lista",
+                  "drinks": []
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lists/{id}": {
+      "get": {
+        "summary": "Pobiera szczegóły wybranej listy.",
+        "description": "Zwraca szczegóły jednej listy wraz z przypisanymi drinkami.",
+        "operationId": "getListById",
+        "tags": ["Lists"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Szczegóły listy z przypisanymi drinkami.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "1",
+                  "name": "Moje ulubione",
+                  "drinks": [{ "id": "a1", "name": "Mojito" }]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lista nie została znaleziona."
+          }
+        }
+      },
+      "put": {
+        "summary": "Aktualizuje nazwę listy.",
+        "description": "Zmienia nazwę istniejącej listy drinków.",
+        "operationId": "updateList",
+        "tags": ["Lists"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "name": "Zmieniona nazwa listy"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lista została zaktualizowana.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "1",
+                  "name": "Zmieniona nazwa listy"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lista nie została znaleziona."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Usuwa listę po ID.",
+        "description": "Usuwa całą listę drinków użytkownika na podstawie ID.",
+        "operationId": "deleteList",
+        "tags": ["Lists"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista została usunięta.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Lista usunięta pomyślnie."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lista nie została znaleziona."
+          }
+        }
+      }
+    },
+    "/lists/{id}/drinks": {
+      "post": {
+        "summary": "Dodaje drinka do listy.",
+        "description": "Dodaje nowy drink do istniejącej listy użytkownika.",
+        "operationId": "addDrinkToList",
+        "tags": ["Drinks"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "drinkId": "c3",
+                "name": "Negroni"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Drink został dodany do listy.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Drink dodany pomyślnie."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lista nie została znaleziona."
+          }
+        }
+      }
+    },
+    "/lists/{id}/drinks/{drinkId}": {
+      "delete": {
+        "summary": "Usuwa drinka z listy.",
+        "description": "Usuwa konkretnego drinka z podanej listy.",
+        "operationId": "removeDrinkFromList",
+        "tags": ["Drinks"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "drinkId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Drink został usunięty z listy.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Drink usunięty pomyślnie."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lista lub drink nie został znaleziony."
+          }
+        }
+      }
+    }
+  }
+}
