@@ -15,3 +15,4 @@ app.listen(port, () => {
 app.post("/favourite", favs.addFavourite);
 
 app.get("/lists/:id", lists.getAllLists);
+app.post("/lists", lists.addList);

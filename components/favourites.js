@@ -13,7 +13,6 @@ async function addFavourite(req, res) {
         new Map(a.map(item => [item.drinkId, item])).values()
       );
 
-
       request.put(
         {
           url: `http://${process.env.MONGO_IP}:3000/users/${userId}`,
