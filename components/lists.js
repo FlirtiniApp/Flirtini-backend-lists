@@ -7,7 +7,6 @@ async function getAllLists(req, res) {
     `http://172.24.3.84:3000/users/${id}`,
     (getError, getResponse, getBody) => {
       const data = JSON.parse(getBody);
-      console.log(dazta);
       res.status(200).json(data);
     }
   );
