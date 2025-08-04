@@ -1,7 +1,8 @@
 const express = require("express");
 const cors = require("cors");
+const dotenv = require('dotenv').config();
 const app = express();
-const port = 3000;
+const port = 6969;
 app.use(express.json());
 app.use(cors());
 const favs = require("./components/favourites");

@@ -1,20 +1,22 @@
 const request = require("request");
 
 async function addFavourite(req, res) {
-  const { drinkId, userId } = req.body;
+  const { drinkId, userId, drinkName } = req.body;
 
   request.get(
-    `http://172.24.3.84:3000/users/${userId}`,
+    `http://${process.env.MONGO_IP}:3000/users/${userId}`,
     (getError, getResponse, getBody) => {
       const data = JSON.parse(getBody);
 
-      let a = [...data.favouriteDrinks, drinkId];
-      let s = new Set(a);
-      let a1 = [...s];
+      let a = [...data.favouriteDrinks, { drinkId, drinkName }];
+      let a1 = Array.from(
+        new Map(a.map(item => [item.drinkId, item])).values()
+      );
+
 
       request.put(
         {
-          url: `http://172.24.3.84:3000/users/${userId}`,
+          url: `http://${process.env.MONGO_IP}:3000/users/${userId}`,
           json: {
             favouriteDrinks: a1,
           },
