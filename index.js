@@ -21,7 +21,6 @@ function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader?.split(' ')[1];
 
-  console.log("niger"); 
   if (!token) return res.status(401).send('Unauthorized');
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
@@ -35,5 +34,6 @@ app.post("/favourite", favs.addFavourite);
 
 app.get("/lists", authenticateToken, lists.getAllLists);
 app.post("/lists", authenticateToken, lists.addList);
+app.post("/listser", authenticateToken, lists.createAndAddToList);
 app.put("/lists", authenticateToken, lists.addToList);
 app.delete("/lists", authenticateToken, lists.removeList);

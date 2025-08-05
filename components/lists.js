@@ -76,7 +76,7 @@ async function addToList (req, res) {
     (getError, getResponse, getBody) => {
       const data = JSON.parse(getBody).lists;
       const list = data.find(element => element.name === listName);
-
+      
       if (!list) {
         return res.status(404).send("List not found");
       }
@@ -102,9 +102,39 @@ async function addToList (req, res) {
   );
 }
 
+async function createAndAddToList (req, res) {
+  const { name, drinkIds } = req.body;
+  const userId = req.user.id;
+
+  request.get(
+    `http://${process.env.MONGO_IP}:3000/users/${userId}`,
+    (getError, getResponse, getBody) => {
+      const data = JSON.parse(getBody).lists;
+
+      const exists = data.some(element => element.name === name);
+      if (exists) {
+        return res.status(400).send("List with that name already exists");
+      }
+
+      request.put(
+        {
+          url: `http://${process.env.MONGO_IP}:3000/users/${userId}`,
+          json: {
+            lists: [...data, { name, drinks: drinkIds }],
+          }
+        },
+        (putError, putResponse, putBody) => {
+          res.status(200).json(putBody);
+        }
+      );
+    }
+  );
+}
+
 module.exports = {
   getAllLists,
   addList,
   addToList,
-  removeList
+  removeList,
+  createAndAddToList
 };
