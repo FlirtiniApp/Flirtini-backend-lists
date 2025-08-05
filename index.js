@@ -16,3 +16,5 @@ app.post("/favourite", favs.addFavourite);
 
 app.get("/lists/:id", lists.getAllLists);
 app.post("/lists", lists.addList);
+app.put("/lists", lists.addToList);
+app.delete("/lists", lists.removeList);
