@@ -12,9 +12,28 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
 
+
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = 'engineer';
+
+
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader?.split(' ')[1];
+
+  console.log("niger"); 
+  if (!token) return res.status(401).send('Unauthorized');
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).send('Invalid token');
+    req.user = user;
+    next();
+  });
+}
+
 app.post("/favourite", favs.addFavourite);
 
-app.get("/lists/:id", lists.getAllLists);
-app.post("/lists", lists.addList);
-app.put("/lists", lists.addToList);
-app.delete("/lists", lists.removeList);
+app.get("/lists", authenticateToken, lists.getAllLists);
+app.post("/lists", authenticateToken, lists.addList);
+app.put("/lists", authenticateToken, lists.addToList);
+app.delete("/lists", authenticateToken, lists.removeList);

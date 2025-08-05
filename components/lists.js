@@ -1,7 +1,7 @@
 const request = require("request");
 
 async function getAllLists(req, res) {
-  const { id } = req.params;
+  const id = req.user.id;
 
   request.get(
     `http://${process.env.MONGO_IP}:3000/users/${id}`,
@@ -13,7 +13,8 @@ async function getAllLists(req, res) {
 }
 
 async function addList(req, res) {
-  const { name, userId } = req.body;
+  const { name } = req.body;
+  const userId = req.user.id;
 
   request.get(
     `http://${process.env.MONGO_IP}:3000/users/${userId}`,
@@ -41,7 +42,8 @@ async function addList(req, res) {
 }
 
 async function removeList(req, res) {
-  const { name, userId } = req.body;
+  const { name } = req.body;
+  const userId = req.user.id;
 
   request.get(
     `http://${process.env.MONGO_IP}:3000/users/${userId}`,
@@ -64,7 +66,8 @@ async function removeList(req, res) {
 }
 
 async function addToList (req, res) {
-  const { drinkId, listName, userId } = req.body;
+  const { drinkId, listName } = req.body;
+  const userId = req.user.id;
 
   //find users lists, get list with listname
 
